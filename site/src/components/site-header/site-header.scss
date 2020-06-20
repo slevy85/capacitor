@@ -60,7 +60,6 @@ site-header {
 
   .announcement {
     position: relative;
-    margin-right: 8px;
 
     a {
       text-decoration: none;
@@ -99,18 +98,6 @@ site-header {
       font-size: 13px;
       margin: 0 14px;
       flex: 0 0 auto;
-
-      @media screen and (max-width: $breakpoint-sm) {
-        display:none;
-      }
-
-      @media screen and (max-width: 1130px) {
-        flex: 0 1 auto;
-        white-space: nowrap; 
-        overflow: hidden;
-        text-overflow: ellipsis;
-        max-width: calc(100vw - 710px);
-      }
     }
     .black {
       color: black;
@@ -119,9 +106,7 @@ site-header {
       color: $color-yellow;
       font-weight: 600;
       padding-right: 4px;
-      margin-left: 8px;
       flex: 0 0 94px;
-      white-space: nowrap;
     }
     .icon {
       fill: $color-yellow;
@@ -131,21 +116,22 @@ site-header {
       margin-left: 2px;
     }
 
+    @media screen and (max-width: $breakpoint-lg) and (min-width: $breakpoint-md) {
+      display: none;
+    }
+
     @media screen and (max-width: $breakpoint-md) {
-      width: 100vw;
+      max-width: 100%;
       padding-top: 5px;
-      margin-right: 0;
-      margin-left: 0;
 
       a {
         display: flex;
         width: 100%;
         border-radius: 0;
-        padding: 0 12px 0 16px;
+        padding: 5px 24px;
       }
       .message {
         flex: 1;
-        max-width: none;
       }
       .cta {
         flex: 0 0 94px;
@@ -256,8 +242,6 @@ site-header {
     position: static;
   }
   .header-menu {
-    display: flex;
-
     a,
     .dropdown__label {
       color: rgba($color-white, 0.7);

@@ -200,10 +200,6 @@ public class CAPCameraPlugin : CAPPlugin, UIImagePickerControllerDelegate, UINav
     self.call?.error("User cancelled photos app")
   }
 
-  public func presentationControllerDidDismiss(_ presentationController: UIPresentationController) {
-    self.call?.error("User cancelled photos app")
-  }
-
   public func imagePickerController(_ picker: UIImagePickerController,
                                     didFinishPickingMediaWithInfo info: [UIImagePickerController.InfoKey : Any]) {
     var image: UIImage?

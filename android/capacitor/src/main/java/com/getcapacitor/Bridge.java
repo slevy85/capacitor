@@ -90,7 +90,7 @@ public class Bridge {
   public static final String CAPACITOR_CONTENT_START = "/_capacitor_content_";
 
   // Loaded Capacitor config
-  private Config config;
+  private JSONObject config = new JSONObject();
 
   // A reference to the main activity for the app
   private final Activity context;
@@ -136,7 +136,7 @@ public class Bridge {
    * @param context
    * @param webView
    */
-  public Bridge(Activity context, WebView webView, List<Class<? extends Plugin>> initialPlugins, CordovaInterfaceImpl cordovaInterface, PluginManager pluginManager, CordovaPreferences preferences, JSONObject config) {
+  public Bridge(Activity context, WebView webView, List<Class<? extends Plugin>> initialPlugins, CordovaInterfaceImpl cordovaInterface, PluginManager pluginManager, CordovaPreferences preferences) {
     this.context = context;
     this.webView = webView;
     this.webViewClient = new BridgeWebViewClient(this);
@@ -148,8 +148,7 @@ public class Bridge {
     handlerThread.start();
     taskHandler = new Handler(handlerThread.getLooper());
 
-    this.config = new Config(getActivity().getAssets(), config);
-    Logger.init(this.config);
+    Config.load(getActivity());
 
     // Initialize web view and message handler for it
     this.initWebView();
@@ -167,8 +166,8 @@ public class Bridge {
   }
 
   private void loadWebView() {
-    appUrlConfig = this.config.getString("server.url");
-    String[] appAllowNavigationConfig = this.config.getArray("server.allowNavigation");
+    appUrlConfig = Config.getString("server.url");
+    String[] appAllowNavigationConfig = Config.getArray("server.allowNavigation");
 
     ArrayList<String> authorities = new ArrayList<String>();
     if (appAllowNavigationConfig != null) {
@@ -176,7 +175,7 @@ public class Bridge {
     }
     this.appAllowNavigationMask = HostMask.Parser.parse(appAllowNavigationConfig);
 
-    String authority = this.config.getString("server.hostname", "localhost");
+    String authority = Config.getString("server.hostname", "localhost");
     authorities.add(authority);
 
     String scheme = this.getScheme();
@@ -202,7 +201,7 @@ public class Bridge {
       }
     }
 
-    final boolean html5mode = this.config.getBoolean("server.html5mode", true);
+    final boolean html5mode = Config.getBoolean("server.html5mode", true);
 
     // Start the local web server
     localServer = new WebViewLocalServer(context, this, getJSInjector(), authorities, html5mode);
@@ -332,11 +331,7 @@ public class Bridge {
    * @return
    */
   public String getScheme() {
-      return this.config.getString("server.androidScheme", CAPACITOR_HTTP_SCHEME);
-  }
-
-  public Config getConfig() {
-    return this.config;
+      return Config.getString("server.androidScheme", CAPACITOR_HTTP_SCHEME);
   }
 
   public void reset() {
@@ -356,21 +351,21 @@ public class Bridge {
     settings.setAppCacheEnabled(true);
     settings.setMediaPlaybackRequiresUserGesture(false);
     settings.setJavaScriptCanOpenWindowsAutomatically(true);
-    if (this.config.getBoolean("android.allowMixedContent", false)) {
+    if (Config.getBoolean("android.allowMixedContent", false)) {
       settings.setMixedContentMode(WebSettings.MIXED_CONTENT_ALWAYS_ALLOW);
     }
 
-    String appendUserAgent = this.config.getString("android.appendUserAgent" , this.config.getString("appendUserAgent", null));
+    String appendUserAgent = Config.getString("android.appendUserAgent" , Config.getString("appendUserAgent", null));
     if (appendUserAgent != null) {
       String defaultUserAgent = settings.getUserAgentString();
       settings.setUserAgentString(defaultUserAgent + " " + appendUserAgent);
     }
-    String overrideUserAgent = this.config.getString("android.overrideUserAgent" , this.config.getString("overrideUserAgent", null));
+    String overrideUserAgent = Config.getString("android.overrideUserAgent" , Config.getString("overrideUserAgent", null));
     if (overrideUserAgent != null) {
       settings.setUserAgentString(overrideUserAgent);
     }
 
-    String backgroundColor = this.config.getString("android.backgroundColor" , this.config.getString("backgroundColor", null));
+    String backgroundColor = Config.getString("android.backgroundColor" , Config.getString("backgroundColor", null));
     try {
       if (backgroundColor != null) {
         webView.setBackgroundColor(Color.parseColor(backgroundColor));
@@ -383,7 +378,7 @@ public class Bridge {
       defaultDebuggable = true;
     }
     webView.requestFocusFromTouch();
-    WebView.setWebContentsDebuggingEnabled(this.config.getBoolean("android.webContentsDebuggingEnabled", defaultDebuggable));
+    WebView.setWebContentsDebuggingEnabled(Config.getBoolean("android.webContentsDebuggingEnabled", defaultDebuggable));
   }
 
   /**
@@ -543,7 +538,7 @@ public class Bridge {
    * Evaluate JavaScript in the web view. This method
    * executes on the main thread automatically.
    * @param js the JS to execute
-   * @param callback an optional ValueCallback that will synchronously receive a value
+   * @param callback an optional ValueCallback that will synchronously recieve a value
    *                 after calling the JS
    */
   public void eval(final String js, final ValueCallback<String> callback) {

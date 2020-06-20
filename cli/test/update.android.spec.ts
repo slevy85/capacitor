@@ -8,7 +8,7 @@ describe.each([false, true])('Update: Android (monoRepoLike: %p)', (monoRepoLike
 
   beforeAll(async () => {
     // These commands are slowww...
-    jest.setTimeout(150000);
+    jest.setTimeout(50000);
     appDirObj = await makeAppDir(monoRepoLike);
     appDir = appDirObj.appDir;
     // Init in this directory so we can test add

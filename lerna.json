@@ -3,10 +3,10 @@
   "gitVersionPrefix": "",
   "packages": [
     "./android/",
-    "./ios/",
+    "./capacitor-ios/",
     "./cli/",
     "./core/",
     "./electron/"
   ],
-  "version": "2.2.0"
+  "version": "2.1.0"
 }

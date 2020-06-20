@@ -1,4 +1,4 @@
-import { Component, Prop, State, Event, EventEmitter, h } from '@stencil/core';
+import { Component, Prop, ComponentInterface, State } from '@stencil/core';
 import SiteProviderConsumer, { SiteState } from '../../global/site-provider-consumer';
 import { SiteStructureItem } from '../../global/definitions';
 
@@ -6,17 +6,11 @@ import { SiteStructureItem } from '../../global/definitions';
   tag: 'site-menu',
   styleUrl: 'site-menu.scss'
 })
-export class SiteMenu {
+export class SiteMenu implements ComponentInterface{
   @Prop() siteStructureList: SiteStructureItem[] = [];
   @Prop({ mutable: true }) selectedParent: SiteStructureItem = null;
 
   @State() closeList = [];
-
-  @Event() leftSidebarClick: EventEmitter;
-
-  handleLeftSidebarClick() {
-    this.leftSidebarClick.emit();
-  }
 
   toggleParent = (itemNumber) => {
     return (e: MouseEvent) => {
@@ -36,7 +30,7 @@ export class SiteMenu {
     return (
       <div class="sticky">
         <SiteProviderConsumer.Consumer>
-        {() => (
+        {({ toggleLeftSidebar }: SiteState) => (
           <div>
             <ul class='menu-list'>
               { this.siteStructureList.map((item, i) => (
@@ -50,7 +44,7 @@ export class SiteMenu {
                   { item.children.map((childItem) => (
                     <li>
                       { (childItem.url) ?
-                      <stencil-route-link url={childItem.url} exact={true} onClick={() => this.handleLeftSidebarClick()}>
+                      <stencil-route-link url={childItem.url} exact={true} onClick={toggleLeftSidebar}>
                         {childItem.text}
                       </stencil-route-link> :
                       <a rel="noopener" class="link--external" target="_blank" href={childItem.filePath}>

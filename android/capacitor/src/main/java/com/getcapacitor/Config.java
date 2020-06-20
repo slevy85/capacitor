@@ -1,7 +1,6 @@
 package com.getcapacitor;
 
 import android.app.Activity;
-import android.content.res.AssetManager;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -18,19 +17,24 @@ public class Config {
 
   private JSONObject config = new JSONObject();
 
-  public Config(AssetManager assetManager, JSONObject config) {
-    if (config != null) {
-      this.config = config;
-    } else {
-      // Load our capacitor.config.json
-      this.loadConfig(assetManager);
+  private static Config instance;
+
+  private static Config getInstance() {
+    if (instance == null) {
+      instance = new Config();
     }
+    return instance;
   }
 
-  private void loadConfig(AssetManager assetManager) {
+  // Load our capacitor.config.json
+  public static void load(Activity activity) {
+    Config.getInstance().loadConfig(activity);
+  }
+
+  private void loadConfig(Activity activity) {
     BufferedReader reader = null;
     try {
-      reader = new BufferedReader(new InputStreamReader(assetManager.open("capacitor.config.json")));
+      reader = new BufferedReader(new InputStreamReader(activity.getAssets().open("capacitor.config.json")));
 
       // do reading, usually loop until end of file reading
       StringBuilder b = new StringBuilder();
@@ -56,9 +60,9 @@ public class Config {
     }
   }
 
-  public JSONObject getObject(String key) {
+  public static JSONObject getObject(String key) {
     try {
-      return this.config.getJSONObject(key);
+      return getInstance().config.getJSONObject(key);
     } catch (Exception ex) {
     }
     return null;
@@ -77,14 +81,14 @@ public class Config {
     return o;
   }
 
-  public String getString(String key) {
+  public static String getString(String key) {
     return getString(key, null);
   }
 
-  public String getString(String key, String defaultValue) {
+  public static String getString(String key, String defaultValue) {
     String k = getConfigKey(key);
     try {
-      JSONObject o = this.getConfigObjectDeepest(key);
+      JSONObject o = getInstance().getConfigObjectDeepest(key);
 
       String value = o.getString(k);
       if (value == null) {
@@ -95,20 +99,20 @@ public class Config {
     return defaultValue;
   }
 
-  public boolean getBoolean(String key, boolean defaultValue) {
+  public static boolean getBoolean(String key, boolean defaultValue) {
     String k = getConfigKey(key);
     try {
-      JSONObject o = this.getConfigObjectDeepest(key);
+      JSONObject o = getInstance().getConfigObjectDeepest(key);
 
       return o.getBoolean(k);
     } catch (Exception ex) {}
     return defaultValue;
   }
 
-  public int getInt(String key, int defaultValue) {
+  public static int getInt(String key, int defaultValue) {
     String k = getConfigKey(key);
     try {
-      JSONObject o = this.getConfigObjectDeepest(key);
+      JSONObject o = getInstance().getConfigObjectDeepest(key);
       return o.getInt(k);
     } catch (Exception ignore) {
       // value was not found
@@ -116,7 +120,7 @@ public class Config {
     return defaultValue;
   }
 
-  private String getConfigKey(String key) {
+  private static String getConfigKey(String key) {
     String[] parts = key.split("\\.");
     if (parts.length > 0) {
       return parts[parts.length - 1];
@@ -124,14 +128,14 @@ public class Config {
     return null;
   }
 
-  public String[] getArray(String key) {
+  public static String[] getArray(String key) {
     return getArray(key, null);
   }
 
-  public String[] getArray(String key, String[] defaultValue) {
+  public static String[] getArray(String key, String[] defaultValue) {
     String k = getConfigKey(key);
     try {
-      JSONObject o = this.getConfigObjectDeepest(key);
+      JSONObject o = getInstance().getConfigObjectDeepest(key);
 
       JSONArray a = o.getJSONArray(k);
       if (a == null) {

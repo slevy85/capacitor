@@ -1,4 +1,4 @@
-import { Component, Element, Listen, State, h } from '@stencil/core';
+import { Component, Element, Listen, State } from '@stencil/core';
 
 @Component({
   tag: 'site-header',
@@ -84,10 +84,10 @@ export class SiteHeader {
         </stencil-route-link>
 
         <div class="announcement">
-          <a href="https://ionicframework.com/ioniconf" target="_blank">
-            <span class="pill">Ioniconf</span>
+          <a href="https://ionicframework.com/resources/webinars/capacitor-2-launch" target="_blank">
+            <span class="pill">Live demo</span>
             <span class="message">
-              A one day online event celebrating cross-platform app development
+              Capacitor 2.0 features and capabilities
             </span>
             <span class="cta">
               Register Now

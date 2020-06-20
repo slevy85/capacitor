@@ -37,8 +37,6 @@ public class Permissions extends Plugin {
       case "clipboard-read":
       case "clipboard-write":
         checkClipboard(call);
-      case "microphone":
-        checkMicrophone(call);
         break;
       default:
         call.reject("Unknown permission type");
@@ -80,10 +78,6 @@ public class Permissions extends Plugin {
     JSObject ret = new JSObject();
     ret.put("state", "granted");
     call.resolve(ret);
-  }
-
-  private void checkMicrophone(PluginCall call) {
-    checkPerm(Manifest.permission.RECORD_AUDIO, call);
   }
 
 }

@@ -119,10 +119,8 @@ public class Camera extends Plugin {
       @Override
       public void onSelect(int index) {
         if (index == 0) {
-          settings.setSource(CameraSource.PHOTOS);
           openPhotos(call);
         } else if (index == 1) {
-          settings.setSource(CameraSource.CAMERA);
           openCamera(call);
         }
       }

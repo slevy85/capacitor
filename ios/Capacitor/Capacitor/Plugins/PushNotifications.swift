@@ -6,7 +6,7 @@ enum PushNotificationError: Error {
 }
 
 /**
- * Implement Push Notifications
+ * Implement three common modal types: alert, confirm, and prompt
  */
 @objc(CAPPushNotificationsPlugin)
 public class CAPPushNotificationsPlugin : CAPPlugin {

@@ -4,7 +4,7 @@ import Foundation
 
 @objc(CAPToastPlugin)
 public class CAPToastPlugin : CAPPlugin {
-
+  var toast: UILabel?
   @objc func show(_ call: CAPPluginCall) {
     guard let text = call.get("text", String.self) else {
       call.error("text must be provided and must be a string.")
@@ -13,14 +13,10 @@ public class CAPToastPlugin : CAPPlugin {
     let durationType = call.get("duration", String.self, "short")!
     let duration = durationType == "long" ? 3500 : 2000
     let position = call.get("position", String.self, "bottom")
-
-    showToast(vc: self.bridge!.viewController, text: text, duration: duration, position: position!, completion: {(isCompleted) in
-      call.success()
-    });
-  }
-  
-  public func showToast(vc: UIViewController, text: String, duration: Int = 2000, position: String = "bottom", completion: ((Bool) -> Void)? = nil) {
+    
     DispatchQueue.main.async {
+      let vc = self.bridge!.viewController
+      
       let maxSizeTitle : CGSize = CGSize(width: vc.view.bounds.size.width-32, height: vc.view.bounds.size.height)
       
       let lb = UILabel()
@@ -57,22 +53,21 @@ public class CAPToastPlugin : CAPPlugin {
         height: height)
       
       lb.padding = UIEdgeInsets(top: 8, left: 8, bottom: 8, right: 8)
-
+      self.toast = lb
+      
       vc.view.addSubview(lb)
       
       UIView.animateKeyframes(withDuration: 0.3, delay: 0, animations: {
-        lb.alpha = 1.0
+        self.toast!.alpha = 1.0
       }, completion: {(isCompleted) in
-       
+        
         UIView.animate(withDuration: 0.3, delay: (Double(duration) / 1000), options: .curveEaseOut, animations: {
-          lb.alpha = 0.0
+          self.toast!.alpha = 0.0
         }, completion: {(isCompleted) in
-          lb.removeFromSuperview()
-
-          if (completion) != nil {
-            completion?(isCompleted);
-          }
+          self.toast!.removeFromSuperview()
+          call.success()
         })
+
       })
     }
   }

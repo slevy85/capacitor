@@ -23,7 +23,7 @@ export class LocalNotificationsPluginWeb extends WebPlugin implements LocalNotif
       platforms: ['web']
     });
   }
-
+  
   createChannel(channel: NotificationChannel): Promise<void> {
     throw new Error('Feature not available in the browser. ' + channel.id);
   }
@@ -31,7 +31,7 @@ export class LocalNotificationsPluginWeb extends WebPlugin implements LocalNotif
   deleteChannel(channel: NotificationChannel): Promise<void> {
     throw new Error('Feature not available in the browser. ' + channel.id);
   }
-
+  
   listChannels(): Promise<NotificationChannelList> {
     throw new Error('Feature not available in the browser');
   }
@@ -107,9 +107,7 @@ export class LocalNotificationsPluginWeb extends WebPlugin implements LocalNotif
   }
 
   areEnabled(): Promise<LocalNotificationEnabledResult> {
-    return Promise.resolve({
-      value: Notification.permission === 'granted'
-    });
+    throw new Error('Method not implemented.');
   }
 
   requestPermission(): Promise<NotificationPermissionResponse> {

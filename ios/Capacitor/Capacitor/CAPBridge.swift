@@ -9,7 +9,8 @@ enum BridgeError: Error {
 
 @objc public class CAPBridge : NSObject {
 
-  var tmpWindow: UIWindow?
+  let tmpWindow = UIWindow.init(frame: UIScreen.main.bounds)
+  let tmpVC = TmpViewController.init()
   @objc public static let statusBarTappedNotification = Notification(name: Notification.Name(rawValue: "statusBarTappedNotification"))
   @objc public static let tmpVCAppeared = Notification(name: Notification.Name(rawValue: "tmpViewControllerAppeared"))
   public static var CAP_SITE = "https://capacitor.ionicframework.com/"
@@ -65,8 +66,10 @@ enum BridgeError: Error {
     registerPlugins()
     setupCordovaCompatibility()
     bindObservers()
+    self.tmpWindow.rootViewController = tmpVC
+    self.tmpWindow.makeKeyAndVisible()
     NotificationCenter.default.addObserver(forName: CAPBridge.tmpVCAppeared.name, object: .none, queue: .none) { _ in
-      self.tmpWindow = nil
+      self.tmpWindow.isHidden = true
     }
   }
   
@@ -598,19 +601,16 @@ enum BridgeError: Error {
     if viewControllerToPresent.modalPresentationStyle == .popover {
       self.viewController.present(viewControllerToPresent, animated: flag, completion: completion)
     } else {
-      self.tmpWindow = UIWindow.init(frame: UIScreen.main.bounds)
-      self.tmpWindow!.rootViewController = TmpViewController.init()
-      self.tmpWindow!.makeKeyAndVisible()
-      self.tmpWindow!.rootViewController!.present(viewControllerToPresent, animated: flag, completion: completion)
+      self.tmpWindow.makeKeyAndVisible()
+      self.tmpVC.present(viewControllerToPresent, animated: flag, completion: completion)
     }
   }
 
   @objc public func dismissVC(animated flag: Bool, completion: (() -> Void)? = nil) {
-    if self.tmpWindow == nil {
+    if self.tmpWindow.isHidden {
       self.viewController.dismiss(animated: flag, completion: completion)
     } else {
-      self.tmpWindow!.rootViewController!.dismiss(animated: flag, completion: completion)
-      self.tmpWindow = nil
+      self.tmpVC.dismiss(animated: flag, completion: completion)
     }
   }
 

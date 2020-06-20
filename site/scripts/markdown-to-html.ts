@@ -33,6 +33,7 @@ const SITE_STRUCTURE_FILE= './src/assets/docs-structure.json';
     if (filePath === './docs-md/README.md') {
       return Promise.resolve();
     }
+    let htmlContents = '';
     let markdownMetadata: MarkdownContent = {};
     const jsonFileName = path.relative(SOURCE_DIR, filePath);
     const destinationFileName = path.join(
@@ -53,7 +54,7 @@ const SITE_STRUCTURE_FILE= './src/assets/docs-structure.json';
       collectHeadingMetadata(renderer, markdownMetadata);
       changeCodeCreation(renderer);
       localizeMarkdownLink(renderer, destinationFileName.replace('src',''), siteStructureJson);
-      let htmlContents = marked(parsedMarkdown.body, {
+      htmlContents = marked(parsedMarkdown.body, {
         renderer,
         headerIds: true
       });
@@ -64,7 +65,7 @@ const SITE_STRUCTURE_FILE= './src/assets/docs-structure.json';
       ));
 
       await writeFile(destinationFileName, JSON.stringify({
-        ...parsedMarkdown.attributes as {},
+        ...parsedMarkdown.attributes,
         ...markdownMetadata,
         srcPath: filePath,
         content: htmlContents
