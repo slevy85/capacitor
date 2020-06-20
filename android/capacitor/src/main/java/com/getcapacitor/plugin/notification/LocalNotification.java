@@ -263,6 +263,16 @@ public class LocalNotification {
     return resId;
   }
 
+  public Integer getLargeIcon(Context context) {
+    List<LocalNotificationAttachment> attachments = this.getAttachments();
+    if(attachments.size() > 0) {
+      LocalNotificationAttachment attachment = attachments.get(0);
+      return getResourceID(context, attachment.getUrl(),"drawable");
+    }
+
+    return null;
+  }
+
   private static int getDefaultSmallIcon(Context context){
     if(defaultSmallIconID != RESOURCE_ID_ZERO_VALUE) return defaultSmallIconID;
 

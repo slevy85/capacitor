@@ -7,6 +7,7 @@ import android.app.NotificationChannel;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.media.AudioAttributes;
 import android.net.Uri;
@@ -182,6 +183,10 @@ public class LocalNotificationManager {
       mBuilder.setDefaults(Notification.DEFAULT_ALL);
     }
 
+    Integer largeIcon = localNotification.getLargeIcon(context);
+    if(largeIcon != null) {
+      mBuilder.setLargeIcon(BitmapFactory.decodeResource(context.getResources(), largeIcon));
+    }
 
     String group = localNotification.getGroup();
     if (group != null) {
@@ -300,12 +305,22 @@ public class LocalNotificationManager {
         Logger.error(Logger.tags("LN"), "Scheduled time must be *after* current time", null);
         return;
       }
+      String every = schedule.getEvery();
+      if (every != null) {
+        Long everyInterval = schedule.getEveryInterval();
+        if (everyInterval != null) {
+          long startTime = at.getTime();
+          alarmManager.setRepeating(AlarmManager.RTC_WAKEUP, startTime, everyInterval, pendingIntent);
+          return;
+        }
+      }
+
       if (schedule.isRepeating()) {
         long interval = at.getTime() - new Date().getTime();
         alarmManager.setRepeating(AlarmManager.RTC, at.getTime(), interval, pendingIntent);
-      } else {
-        alarmManager.setExact(AlarmManager.RTC, at.getTime(), pendingIntent);
-      }
+        return;
+      } 
+      alarmManager.setExact(AlarmManager.RTC, at.getTime(), pendingIntent);
       return;
     }
 

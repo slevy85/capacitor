@@ -276,6 +276,9 @@ public class CAPLocalNotificationsPlugin : CAPPlugin {
     if let day = at["day"] {
       dateInfo.day = day
     }
+    if let weekday = at["weekday"] {
+      dateInfo.weekday = weekday
+    }
     if let hour = at["hour"] {
       dateInfo.hour = hour
     }

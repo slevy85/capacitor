@@ -3,6 +3,8 @@ package com.getcapacitor.plugin.notification;
 import android.content.Context;
 import android.content.SharedPreferences;
 
+import com.google.gson.Gson;
+
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -16,6 +18,9 @@ public class NotificationStorage {
 
   // Key for private preferences
   private static final String NOTIFICATION_STORE_ID = "NOTIFICATION_STORE";
+
+  // Key for private preferences
+  private static final String NOTIFICATION_STORE_OBJECT = "NOTIFICATION_STORE_OBJECT";
 
   // Key used to save action types
   private static final String ACTION_TYPES_ID = "ACTION_TYPE_STORE";
@@ -42,7 +47,34 @@ public class NotificationStorage {
     editor.apply();
   }
 
+  public LocalNotification getNotification(String id) {
+    SharedPreferences storage = getStorage(NOTIFICATION_STORE_OBJECT);
+    String json = storage.getString(id,"{}");
+    Gson gson = new Gson();
+   return gson.fromJson(json,LocalNotification.class);
+  }
+
+  public void appendNotifications(List<LocalNotification> localNotifications) {
+    SharedPreferences storage = getStorage(NOTIFICATION_STORE_OBJECT);
+    SharedPreferences.Editor editor = storage.edit();
+     Gson gson = new Gson();
+    for (LocalNotification request : localNotifications) {
+      String key = request.getId().toString();
+      editor.putString(key, gson.toJson(request));
+    }
+    editor.apply();
+  }
+
   public List<String> getSavedNotificationIds() {
+    SharedPreferences storage = getStorage(NOTIFICATION_STORE_ID);
+    Map<String, ?> all = storage.getAll();
+    if (all != null) {
+      return new ArrayList<>(all.keySet());
+    }
+    return new ArrayList<>();
+  }
+
+  public List<String> getSavedNotificationObjectIds() {
     SharedPreferences storage = getStorage(NOTIFICATION_STORE_ID);
     Map<String, ?> all = storage.getAll();
     if (all != null) {
@@ -58,6 +90,10 @@ public class NotificationStorage {
     SharedPreferences.Editor editor = getStorage(NOTIFICATION_STORE_ID).edit();
     editor.remove(id);
     editor.apply();
+
+    SharedPreferences.Editor objectEditor = getStorage(NOTIFICATION_STORE_OBJECT).edit();
+    objectEditor.remove(id);
+    objectEditor.apply();
   }
 
   /**
