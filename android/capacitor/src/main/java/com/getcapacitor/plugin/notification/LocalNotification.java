@@ -258,7 +258,15 @@ public class LocalNotification {
     return resId;
   }
 
+  public Integer getLargeIcon(Context context) {
+    List<LocalNotificationAttachment> attachments = this.getAttachments();
+    if(attachments.size() > 0) {
+      LocalNotificationAttachment attachment = attachments.get(0);
+      return AssetUtil.getResourceID(context, attachment.getUrl(),"drawable");
+    }
 
+    return null;
+  }
 
   public boolean isScheduled() {
     return this.schedule != null &&
